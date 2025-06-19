@@ -10,6 +10,11 @@ namespace fs = std::filesystem;
 
 namespace po = boost::program_options;
 
+// local
+#include "PackageParser/packageparser.hpp"
+
+using namespace train_protocol;
+
 void print_help_option(const po::options_description& desc)
 {
     std::cout << "Usage: cli_package_parser [inputfile]\n\n";
@@ -49,12 +54,22 @@ int main(int argc, char** argv)
         return -1;
     }
 
-    std::fstream in(in_path_opt, std::ios::in);
-
-    if (!in.is_open())
+    if (!fs::exists(in_path_opt))
     {
-        std::cerr << "Couldn't open file: " << in_path_opt << '\n';
+        std::cerr << "Error: file doesn't exist.\npath to file: " << in_path_opt << '\n';
         return -1;
+    }
+
+    try
+    {
+        TrainPacketsParser parsed_packets;
+
+        parsed_packets.Parse(in_path_opt);
+        std::cout << parsed_packets;
+    }
+    catch (std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
     }
 
     return 0;

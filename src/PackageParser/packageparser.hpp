@@ -21,7 +21,7 @@ namespace train_protocol
 
 		friend std::ostream& operator<<(std::ostream&, const TrainPacketsParser&);
 	private:
-		void worker(std::ifstream);
+		void worker(std::vector<uint8_t>);
 
 		uint32_t _total_packets_processed = 0;
 		std::atomic<uint32_t> _non_ipv4_packets = 0;
@@ -29,6 +29,6 @@ namespace train_protocol
 		std::mutex _mut;
 		boost::asio::thread_pool _tp;
 
-		std::unordered_map<uint32_t, std::unordered_map<uint32_t, uint32_t>> _from_to_addrs_count_map;
+		std::unordered_map<uint64_t, uint32_t> _from_to_addrs_count;
 	};
 }
